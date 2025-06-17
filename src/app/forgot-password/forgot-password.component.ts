@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -8,25 +8,28 @@ import { Router } from '@angular/router';
   styleUrls: ['./forgot-password.component.css']
 })
 export class ForgotPasswordComponent {
+  email: string = '';
 
-  email : String = "";
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  constructor( private userService: UserService,
-               private router: Router)
-  { 
-  }
   resetPassword() {
-    console.log(this.email);
-    
-    var myValidUser = this.userService.sendUrlResetPassword(
-        this.email
-       );
+    if (!this.email.trim()) {
+      alert('Por favor, ingresa un correo válido');
+      return;
+    }
 
-    if (myValidUser.id != 0)
-        this.router.navigate(['/']);
-
-     console.log(myValidUser);
-
-
+    this.authService.forgot(this.email).subscribe({
+      next: () => {
+        alert('Te hemos enviado un correo con las instrucciones para restablecer tu contraseña.');
+        this.router.navigate(['/login']);
+      },
+      error: err => {
+        alert('No se pudo enviar el correo. Intenta más tarde.');
+        console.error('Error al enviar email:', err);
+      }
+    });
   }
 }

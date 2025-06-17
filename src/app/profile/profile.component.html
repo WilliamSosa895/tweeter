@@ -1,0 +1,10 @@
+<div class="profile-card">
+  <h2>&#64;{{ username }}</h2>
+  <div *ngIf="tweets.length === 0" class="no-posts">
+    Este usuario no tiene publicaciones aún.
+  </div>
+  <div *ngFor="let t of tweets" class="tweet">
+    <p>{{ t.content }}</p>
+    <a [routerLink]="['/posts', t.id]">Ver detalle</a>
+  </div>
+</div>

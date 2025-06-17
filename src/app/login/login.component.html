@@ -1,38 +1,50 @@
-<table border=1>
-<tr> 
-  <td> login CRM-uv  </td> <td> 
-  <a routerLink="/">
-     cancel 
-  </a>
-  </td>
-</tr>
-<tr> 
-  <td> Email </td> <td> <input type="email" [(ngModel)]="email" > {{email}} </td>
-</tr>
-<tr> 
-<td> Password </td> <td> <input type="password" [(ngModel)]="password"> {{password }} </td>
-</tr>
-<tr> 
- <td></td> <td>
+<div class="auth-container">
+  <div class="auth-card">
+    <img src="/assets/logo-futbol.png" alt="Logo" class="logo" />
 
-  <a routerLink="/forgot-password">
-     Forgot Password ? 
-  </a>
+    <form (ngSubmit)="callLogin()" #loginForm="ngForm" novalidate>
+      <input
+        name="username"
+        [(ngModel)]="username"
+        placeholder="Nombre de usuario"
+        required
+      />
 
-</td> 
-</tr>
-<tr> 
-<td> </td> <td>
-         <button (click)="callLogin()"> log in </button>
-         {{ myLogin.user }}
- </td>
-</tr>
-<tr> 
- <td></td> <td> new?
+      <div class="password-wrapper">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Contraseña"
+          required
+        />
+        <button
+          type="button"
+          class="toggle"
+          (click)="showPassword = !showPassword"
+        >
+          {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+        </button>
+      </div>
 
-  <a routerLink="/newuser">
-    create account
-  </a>
- </td> 
-</tr>
-</table>
+      <button
+        type="submit"
+        class="btn primary"
+        [disabled]="loginForm.invalid"
+      >
+        Iniciar sesión
+      </button>
+    </form>
+
+    <a routerLink="/forgot-password" class="forgot">
+      ¿Olvidaste tu contraseña?
+    </a>
+  </div>
+
+  <div class="auth-card signup-card">
+    <p>
+      ¿No tienes una cuenta?
+      <a routerLink="/new-user"><strong>Regístrate</strong></a>
+    </p>
+  </div>
+</div>

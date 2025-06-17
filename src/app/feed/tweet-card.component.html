@@ -1,0 +1,15 @@
+<!-- File: src/app/feed/tweet-card.component.html -->
+<div class="post-card">
+  <div class="header">
+    <img class="avatar" [src]="tweet.postedBy.avatarUrl||'assets/default-avatar.png'">
+    <strong>{{ tweet.postedBy.username }}</strong>
+    <small>{{ tweet.createdAt | date:'short' }}</small>
+  </div>
+  <p>{{ tweet.content }}</p>
+  <img *ngIf="tweet.imageUrl" [src]="tweet.imageUrl">
+  <div class="actions">
+    <button (click)="onLike()">👍 {{ tweet.reactionCount }}</button>
+    <button (click)="onRepost()">🔄 {{ tweet.repostCount }}</button>
+    <button (click)="onComment()">💬 {{ tweet.commentCount }}</button>
+  </div>
+</div>

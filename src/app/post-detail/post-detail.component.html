@@ -1,0 +1,17 @@
+<!-- File: src/app/post-detail/post-detail.component.html -->
+<div *ngIf="tweet" class="post-card">
+  <div class="header">
+    <img class="avatar" [src]="tweet.postedBy.avatarUrl||'assets/default-avatar.png'">
+    <strong>{{ tweet.postedBy.username }}</strong>
+    <small>{{ tweet.createdAt | date:'short' }}</small>
+  </div>
+  <p>{{ tweet.content }}</p>
+  <img *ngIf="tweet.imageUrl" [src]="tweet.imageUrl">
+  <hr>
+  <h3>Comentarios</h3>
+  <div *ngFor="let c of comments" class="comment">
+    <strong>{{ c.username }}</strong>: {{ c.text }}
+  </div>
+  <input [(ngModel)]="newComment" placeholder="Añadir comentario...">
+  <button (click)="addComment()">Comentar</button>
+</div>

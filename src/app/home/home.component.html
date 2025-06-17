@@ -1,1 +1,56 @@
-<p>home works!</p>
+<div class="post-form">
+  <textarea [(ngModel)]="newContent"
+            placeholder="¿Qué estás pensando?"
+            rows="3"></textarea>
+  <input type="file" (change)="onFile($event)" />
+  <button (click)="publish()">Publicar</button>
+</div>
+
+<div class="feed">
+  <div class="card" *ngFor="let tw of tweets">
+    <div class="card-header">
+      <img class="avatar"
+           [src]="tw.postedBy.avatarUrl
+              ? apiBase + tw.postedBy.avatarUrl
+              : 'assets/default-avatar.png'" />
+      <div class="user-info">
+        <strong>{{ tw.postedBy.username }}</strong>
+        <small>{{ tw.createdAt | date:'short' }}</small>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>{{ tw.content }}</p>
+      <img *ngIf="tw.imageUrl"
+           [src]="apiBase + tw.imageUrl"
+           class="post-img" />
+    </div>
+    <div class="card-actions">
+      <!-- Total de reacciones -->
+      <button (click)="togglePicker(tw.id)">
+        ❤️ {{ reactionTotal[tw.id] || 0 }}
+      </button>
+      <!-- Total de comentarios -->
+      <button (click)="toggleComments(tw.id)">
+        💬 {{ commentCount[tw.id] || 0 }}
+      </button>
+    </div>
+
+    <!-- picker de reacciones -->
+    <app-reaction-picker
+      *ngIf="showPicker[tw.id]"
+      [selected]="myReaction[tw.id]"
+      (select)="onReact(tw.id, $event)">
+    </app-reaction-picker>
+
+    <!-- sección de comentarios -->
+    <div class="comments" *ngIf="showComments[tw.id]">
+      <div *ngFor="let c of comments[tw.id]" class="comment">
+        <strong>{{ c.username }}</strong>: {{ c.text }}
+      </div>
+      <div class="new-comment">
+        <input [(ngModel)]="newComment[tw.id]" placeholder="Escribe un comentario…" />
+        <button (click)="addComment(tw.id)">Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>

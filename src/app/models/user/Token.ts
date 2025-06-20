@@ -1,5 +1,7 @@
 export class Token {
-    id: String = "";
-    user: String = "";
-    token: String = ""
+  id!: number;
+  username!: string;
+  email!: string;
+  roles!: string[];
+  accessToken!: string;
 }

@@ -1,0 +1,29 @@
+/* sólo estilos adicionales de este componente */
+
+/* Mostrar / ocultar contraseña */
+.password-wrapper {
+  position: relative;
+}
+.password-wrapper .toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: #3897f0;
+  cursor: pointer;
+}
+
+/* link “olvidé” */
+.forgot {
+  display: block;
+  margin-top: 0.5rem;
+  color: #00376b;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.forgot:hover {
+  text-decoration: underline;
+}

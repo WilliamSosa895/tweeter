@@ -1,9 +1,8 @@
+// File: src/app/login/login.component.ts
 import { Component } from '@angular/core';
-import { UserService } from '../services/user.service';
-import { Credential } from '../models/user/Credential';
-import { Router } from '@angular/router';
-import { Token } from '../models/user/Token';
-
+import { Router }    from '@angular/router';
+import { AuthService, LoginPayload, JwtToken } from '../services/auth.service';
+import { StorageService }                   from '../services/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -11,32 +10,79 @@ import { Token } from '../models/user/Token';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+  username     = '';
+  password     = '';
+  loading      = false;
+  showPassword = false;
 
-    constructor( private userService: UserService,
-	         private router: Router
-    ) 
-    { } 
+  constructor(
+    private auth: AuthService,
+    private storage: StorageService,
+    private router: Router
+  ) {}
 
-    email : String = "adsoft@live.com.mx";
-    password : String = "123";
-    myLogin = new Token();
-
-    callLogin() {
-
-      //alert("login..."); 
-     
-     var myCredential = new Credential();
-      
-     myCredential.email = this.email;
-     myCredential.password = this.password;
- 
-     this.myLogin = this.userService.postLogin(
-        myCredential 
-       );   
-     if (this.myLogin.token != "")
+  callLogin(): void {
+    if (!this.username.trim() || !this.password) {
+      alert('Completa usuario y contraseña');
+      return;
+    }
+    this.loading = true;
+    const payload: LoginPayload = {
+      username: this.username,
+      password: this.password
+    };
+    this.auth.signin(payload).subscribe({
+      next: (tok: JwtToken) => {
+        this.storage.setSession(tok);
         this.router.navigate(['/home']);
-
-     console.log(this.myLogin);
-
-    } 
+      },
+      error: () => {
+        alert('Credenciales inválidas');
+        this.loading = false;
+      }
+    });
+  }
 }
+
+
+
+
+
+
+/*import { Component } from '@angular/core';
+import { AuthService, LoginPayload, JwtToken } from '../services/auth.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent {
+  username    = '';
+  password    = '';
+  showPassword = false;
+
+  constructor(
+    private auth: AuthService,
+    private router: Router
+  ) {}
+
+  callLogin() {
+    const payload: LoginPayload = {
+      username: this.username.trim(),
+      password: this.password
+    };
+    this.auth.signin(payload).subscribe({
+      next: (token: JwtToken) => {
+        sessionStorage.setItem('token', token.accessToken);
+        sessionStorage.setItem('user', JSON.stringify(token));
+        this.router.navigate(['/home']);
+      },
+      error: err => {
+        alert('Usuario o contraseña incorrectos');
+        console.error('Login error', err);
+      }
+    });
+  }
+}*/

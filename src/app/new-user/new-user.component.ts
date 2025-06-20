@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { UserService } from '../services/user.service';
-import { User } from '../models/user/User';
+import { AuthService, SignupPayload } from '../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,28 +8,24 @@ import { Router } from '@angular/router';
   styleUrls: ['./new-user.component.css']
 })
 export class NewUserComponent {
+  myPayloadUser: SignupPayload = {
+    username: '',
+    email:    '',
+    password: ''
+  };
 
- constructor( private userService: UserService,
-	      private router: Router
-    ) 
- {
- } 
+  constructor(
+    private auth: AuthService,
+    private router: Router
+  ) {}
 
- myPayloadUser = new User();
- myNewUser = new User();
-
- createUser() {
-   console.log(this.myPayloadUser);
-
- this.myNewUser = this.userService.createUser(
-        this.myPayloadUser
-       );
- 
- console.log(this.myNewUser);
-
- if (this.myNewUser.id != 0)
-        this.router.navigate(['/login']);
-
- } 
-
+  createUser() {
+    this.auth.signup(this.myPayloadUser).subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: err => {
+        alert('Error al registrar usuario');
+        console.error('Signup error', err);
+      }
+    });
+  }
 }

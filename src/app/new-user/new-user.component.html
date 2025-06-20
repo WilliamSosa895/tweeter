@@ -1,54 +1,54 @@
-<table border=1>
-<tr>
-  <td> Sign up for CRM-uv  </td> <td>
-  <a routerLink="/">
-     cancel
-  </a>
-  </td>
-</tr>
-<tr>
-  <td colspan=2> Email </td>
-</tr>
+<div class="auth-container">
+  <div class="auth-card">
+    <img src="/assets/logo-futbol.png" alt="Logo" class="logo" />
 
-<tr>
- <td colspan=2> <input type="email" [(ngModel)]="myPayloadUser.email" >  </td>
-</tr>
+    <p class="subtitle">
+      Regístrate para ver fotos y videos de tus amigos.
+    </p>
 
-<tr>
-<td> First Name </td> <td> Last Name  </td>
-</tr>
+    <form (ngSubmit)="createUser()" #signupForm="ngForm" novalidate>
+      <input
+        name="username"
+        [(ngModel)]="myPayloadUser.username"
+        placeholder="Nombre de usuario"
+        required
+      />
+      <input
+        name="email"
+        type="email"
+        [(ngModel)]="myPayloadUser.email"
+        placeholder="Correo electrónico"
+        required
+      />
+      <input
+        name="password"
+        type="password"
+        [(ngModel)]="myPayloadUser.password"
+        placeholder="Contraseña"
+        required
+      />
 
-<tr>
-<td>  <input type="text" [(ngModel)]="myPayloadUser.firstName" name="firstName" >  </td>
- <td> <input type="text" [(ngModel)]="myPayloadUser.lastName">  </td>
-</tr>
+      <button
+        type="submit"
+        class="btn primary"
+        [disabled]="signupForm.invalid"
+      >
+        Regístrate
+      </button>
+    </form>
 
-<tr>
-<td colspan=2> Password </td>   
-</tr>
-<tr colspan=2>
-<td>  <input type="password" [(ngModel)]="myPayloadUser.password">  </td>
-</tr>
+    <p class="agreement">
+      Al registrarte, aceptas nuestras
+      <a href="#">Condiciones</a>,
+      <a href="#">Política de privacidad</a> y
+      <a href="#">Política de cookies</a>.
+    </p>
+  </div>
 
-
-<tr>
- <td colspan=2 >
-
-   Please provide a password of at least 8 chars
-
-</td>
-</tr>
-<tr>
-<td colspan=2> 
-   <input type="checkbox"> I have read and agree to CRM-univ ...
- </td>
-</tr>
-<tr>
- <td></td> <td> 
-  <button (click)="createUser()"> 
-       create
-  </button>
-
- </td>
-</tr>
-</table>
+  <div class="auth-card signup-card">
+    <p>
+      ¿Tienes una cuenta?
+      <a routerLink="/login"><strong>Inicia sesión</strong></a>
+    </p>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-// File: src/app/feed/tweet-card.component.ts
+// src/app/feed/tweet-card.component.ts
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Tweet } from '../models/tweets/Tweet';
 

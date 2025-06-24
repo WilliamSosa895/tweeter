@@ -1,9 +1,8 @@
-// Antes tenías:
-// import { TweetService, CommentResponse } from '../services/tweet.service';
+// src/app/post-detail/post-detail.component.ts
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TweetService } from '../services/tweet.service';
-import { Tweet } from '../models/tweets/Tweet';
+import { ActivatedRoute }     from '@angular/router';
+import { TweetService }       from '../services/tweet.service';
+import { Tweet }              from '../models/tweets/Tweet';
 
 @Component({
   selector: 'app-post-detail',
@@ -38,7 +37,7 @@ export class PostDetailComponent implements OnInit {
   }
 
   addComment() {
-    if (!this.newComment) return;
+    if (!this.newComment.trim()) return;
     this.svc.addComment(this.id, this.newComment)
       .subscribe(() => {
         this.newComment = '';

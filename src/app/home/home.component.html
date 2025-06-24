@@ -1,3 +1,92 @@
+<!-- Archivo: src/app/home/home.component.html -->
+
+<div class="post-form">
+  <textarea
+    [(ngModel)]="newContent"
+    placeholder="¿Qué estás pensando?"
+    rows="3"
+  ></textarea>
+  <input type="file" (change)="onFile($event)" />
+  <button (click)="publish()">Publicar</button>
+</div>
+
+<div class="feed">
+  <div class="card" *ngFor="let tw of tweets">
+    <!-- Cabecera con avatar y nombre de usuario -->
+    <div class="card-header">
+      <img
+        class="avatar"
+        src="assets/default-avatar.png"
+        alt="Avatar del usuario"
+      />
+      <div class="user-info">
+        <strong>{{ tw.postedBy }}</strong>
+        <small>{{ tw.createdAt | date:'short' }}</small>
+      </div>
+    </div>
+
+    <!-- Cuerpo del post -->
+    <div class="card-body">
+      <p>{{ tw.content }}</p>
+      <img
+        *ngIf="tw.imageUrl"
+        [src]="'https://red-social-spring-latest.onrender.com' + tw.imageUrl"
+        class="post-img"
+        alt="Imagen del post"
+      />
+    </div>
+
+    <!-- Acciones: abrir picker, detalles y comentarios -->
+    <div class="card-actions">
+      <button
+        (click)="togglePicker(tw.id)"
+        (mouseenter)="showReactions[tw.id]=true"
+        (mouseleave)="showReactions[tw.id]=false"
+        (dblclick)="toggleReactionsDetail(tw.id)"
+      >
+        ❤️ {{ reactionTotal[tw.id] || 0 }}
+      </button>
+      <button (click)="toggleComments(tw.id)">
+        💬 {{ commentCount[tw.id] || 0 }}
+      </button>
+    </div>
+
+    <!-- Lista detallada de tipos de reacción -->
+    <div
+      *ngIf="showReactions[tw.id]"
+      style="padding: 0 1rem .5rem; font-size:.9rem; color:#333;"
+    >
+      <div *ngFor="let type of getReactionTypes(tw.id)">
+        {{ labelFor(type) }}: {{ reactionCounts[tw.id][type] }}
+      </div>
+    </div>
+
+    <!-- Picker de reacciones -->
+    <app-reaction-picker
+      *ngIf="showPicker[tw.id]"
+      [selected]="myReaction[tw.id]"
+      (select)="onReact(tw.id, $event)"
+    ></app-reaction-picker>
+
+    <!-- Sección de comentarios -->
+    <div class="comments" *ngIf="showComments[tw.id]">
+      <div *ngFor="let c of comments[tw.id]" class="comment">
+        <strong>{{ c.username }}</strong>: {{ c.text }}
+      </div>
+      <div class="new-comment">
+        <input
+          [(ngModel)]="newComment[tw.id]"
+          placeholder="Escribe un comentario…"
+        />
+        <button (click)="addComment(tw.id)">Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <!--
 <div class="post-form">
   <textarea [(ngModel)]="newContent"
             placeholder="¿Qué estás pensando?"
@@ -10,47 +99,64 @@
   <div class="card" *ngFor="let tw of tweets">
     <div class="card-header">
       <img class="avatar"
-           [src]="tw.postedBy.avatarUrl
-              ? apiBase + tw.postedBy.avatarUrl
-              : 'assets/default-avatar.png'" />
+           [src]="
+             tw.postedBy.avatarUrl
+               ? 'https://red-social-spring-latest.onrender.com'+tw.postedBy.avatarUrl
+               : 'assets/default-avatar.png'
+           " alt="Avatar"/>
       <div class="user-info">
         <strong>{{ tw.postedBy.username }}</strong>
         <small>{{ tw.createdAt | date:'short' }}</small>
       </div>
     </div>
+
     <div class="card-body">
       <p>{{ tw.content }}</p>
       <img *ngIf="tw.imageUrl"
-           [src]="apiBase + tw.imageUrl"
-           class="post-img" />
+           [src]="'https://red-social-spring-latest.onrender.com'+tw.imageUrl"
+           class="post-img"/>
     </div>
+
     <div class="card-actions">
-      <!-- Total de reacciones -->
-      <button (click)="togglePicker(tw.id)">
+      <button
+        (click)="togglePicker(tw.id)"
+        (mouseenter)="showReactions[tw.id]=true"
+        (mouseleave)="showReactions[tw.id]=false"
+        (dblclick)="toggleReactionsDetail(tw.id)"
+      >
         ❤️ {{ reactionTotal[tw.id] || 0 }}
       </button>
-      <!-- Total de comentarios -->
       <button (click)="toggleComments(tw.id)">
         💬 {{ commentCount[tw.id] || 0 }}
       </button>
     </div>
 
-    <!-- picker de reacciones -->
+    <div
+      *ngIf="showReactions[tw.id]"
+      style="padding:0 1rem .5rem; font-size:.9rem; color:#333;"
+    >
+      <div *ngFor="let type of getReactionTypes(tw.id)">
+        {{ labelFor(type) }}: {{ reactionCounts[tw.id][type] }}
+      </div>
+    </div>
+
     <app-reaction-picker
       *ngIf="showPicker[tw.id]"
       [selected]="myReaction[tw.id]"
-      (select)="onReact(tw.id, $event)">
-    </app-reaction-picker>
+      (select)="onReact(tw.id, $event)"
+    ></app-reaction-picker>
 
-    <!-- sección de comentarios -->
     <div class="comments" *ngIf="showComments[tw.id]">
       <div *ngFor="let c of comments[tw.id]" class="comment">
         <strong>{{ c.username }}</strong>: {{ c.text }}
       </div>
       <div class="new-comment">
-        <input [(ngModel)]="newComment[tw.id]" placeholder="Escribe un comentario…" />
+        <input [(ngModel)]="newComment[tw.id]"
+               placeholder="Escribe un comentario…" />
         <button (click)="addComment(tw.id)">Enviar</button>
       </div>
     </div>
   </div>
 </div>
+
+ -->

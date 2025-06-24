@@ -1,6 +1,7 @@
+// Archivo: src/app/home/home.component.ts
 import { Component, OnInit } from '@angular/core';
-import { TweetService } from '../services/tweet.service';
-import { Tweet } from '../models/tweets/Tweet';
+import { TweetService }      from '../services/tweet.service';
+import { Tweet }             from '../models/tweets/Tweet';
 
 @Component({
   selector: 'app-home',
@@ -8,22 +9,20 @@ import { Tweet } from '../models/tweets/Tweet';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  apiBase = 'https://red-social-spring-latest.onrender.com';
   tweets: Tweet[] = [];
   newContent = '';
   selectedFile?: File;
 
-  // ────────────── ESTADO DE REACCIONES ──────────────
+  // Estado de reacciones y comentarios
   reactionCounts: { [postId: number]: { [type: string]: number } } = {};
-  reactionTotal: { [postId: number]: number } = {};
-  myReaction: { [postId: number]: number } = {};
-
-  // ────────────── ESTADO DE COMENTARIOS ──────────────
-  showPicker: { [key: number]: boolean } = {};
-  showComments: { [key: number]: boolean } = {};
-  comments: { [key: number]: any[] } = {};
-  commentCount: { [key: number]: number } = {};
-  newComment: { [key: number]: string } = {};
+  reactionTotal:  { [postId: number]: number } = {};
+  myReaction:     { [postId: number]: number } = {};
+  showReactions:  { [postId: number]: boolean } = {};
+  showPicker:     { [postId: number]: boolean } = {};
+  showComments:   { [postId: number]: boolean } = {};
+  comments:       { [postId: number]: any[] } = {};
+  commentCount:   { [postId: number]: number } = {};
+  newComment:     { [postId: number]: string } = {};
 
   constructor(private svc: TweetService) {}
 
@@ -49,7 +48,8 @@ export class HomeComponent implements OnInit {
   }
 
   publish() {
-    this.svc.create(this.newContent, undefined, this.selectedFile)
+    if (!this.newContent.trim()) return;
+    this.svc.create(this.newContent, this.selectedFile)
       .subscribe(() => {
         this.newContent = '';
         this.selectedFile = undefined;
@@ -67,9 +67,8 @@ export class HomeComponent implements OnInit {
     this.svc.getReactionCounts(postId)
       .subscribe(counts => {
         this.reactionCounts[postId] = counts;
-        // calcular total
-        this.reactionTotal[postId] = Object.keys(counts)
-          .reduce((sum, key) => sum + (counts[key] || 0), 0);
+        this.reactionTotal[postId] = Object.values(counts)
+          .reduce((sum, c) => sum + c, 0);
       });
   }
 
@@ -78,9 +77,143 @@ export class HomeComponent implements OnInit {
       .subscribe(counts => {
         this.reactionCounts[postId] = counts;
         this.myReaction[postId] = reactionId;
-        // recalcular total
-        this.reactionTotal[postId] = Object.keys(counts)
-          .reduce((sum, key) => sum + (counts[key] || 0), 0);
+        this.reactionTotal[postId] = Object.values(counts)
+          .reduce((sum, c) => sum + c, 0);
+      });
+  }
+
+  // ────────────── DETALLE DE REACCIONES ──────────────
+
+  toggleReactionsDetail(id: number) {
+    this.showReactions[id] = !this.showReactions[id];
+  }
+
+  getReactionTypes(postId: number): string[] {
+    return Object.keys(this.reactionCounts[postId] || {});
+  }
+
+  labelFor(type: string): string {
+    switch (type) {
+      case '1': return 'Me gusta';
+      case '2': return 'Me encanta';
+      case '3': return 'Me entristece';
+      case '4': return 'Me enfurece';
+      case '5': return 'Lo odio';
+      default:  return type;
+    }
+  }
+
+  // ────────────── COMENTARIOS ──────────────
+
+  toggleComments(id: number) {
+    this.showComments[id] = !this.showComments[id];
+    if (this.showComments[id]) {
+      this.loadComments(id);
+    }
+  }
+
+  loadComments(postId: number) {
+    this.svc.getComments(postId)
+      .subscribe(r => {
+        this.comments[postId] = r.content;
+        this.commentCount[postId] = r.content.length;
+      });
+  }
+
+  addComment(postId: number) {
+    const txt = this.newComment[postId]?.trim();
+    if (!txt) return;
+    this.svc.addComment(postId, txt)
+      .subscribe(() => {
+        this.newComment[postId] = '';
+        this.loadComments(postId);
+      });
+  }
+}
+
+
+
+
+
+/*import { Component, OnInit } from '@angular/core';
+import { TweetService }      from '../services/tweet.service';
+import { Tweet }             from '../models/tweets/Tweet';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent implements OnInit {
+  tweets: Tweet[] = [];
+  newContent = '';
+  selectedFile?: File;
+
+  // Estado de reacciones y comentarios
+  reactionCounts: { [postId: number]: { [type: string]: number } } = {};
+  reactionTotal:  { [postId: number]: number } = {};
+  myReaction:    { [postId: number]: number } = {};
+  showPicker:    { [postId: number]: boolean } = {};
+  showComments:  { [postId: number]: boolean } = {};
+  comments:      { [postId: number]: any[] } = {};
+  commentCount:  { [postId: number]: number } = {};
+  newComment:    { [postId: number]: string } = {};
+
+  constructor(private svc: TweetService) {}
+
+  ngOnInit() {
+    this.load();
+  }
+
+  load() {
+    this.svc.page().subscribe(r => {
+      this.tweets = r.content;
+      this.tweets.forEach(tw => {
+        this.loadReactions(tw.id);
+        this.loadComments(tw.id);
+      });
+    });
+  }
+
+  onFile(ev: Event) {
+    const el = ev.target as HTMLInputElement;
+    if (el.files && el.files.length) {
+      this.selectedFile = el.files[0];
+    }
+  }
+
+  publish() {
+    if (!this.newContent.trim()) return;
+    this.svc.create(this.newContent, this.selectedFile)
+      .subscribe(() => {
+        this.newContent = '';
+        this.selectedFile = undefined;
+        this.load();
+      });
+  }
+
+  // ────────────── REACCIONES ──────────────
+
+  togglePicker(id: number) {
+    this.showPicker[id] = !this.showPicker[id];
+  }
+
+  loadReactions(postId: number) {
+    this.svc.getReactionCounts(postId)
+      .subscribe(counts => {
+        this.reactionCounts[postId] = counts;
+        this.reactionTotal[postId] = Object.values(counts)
+          .reduce((sum, c) => sum + c, 0);
+      });
+  }
+
+  onReact(postId: number, reactionId: number) {
+    this.svc.addReaction(postId, reactionId)
+      .subscribe(counts => {
+        this.reactionCounts[postId] = counts;
+        this.myReaction[postId] = reactionId;
+        this.reactionTotal[postId] = Object.values(counts)
+          .reduce((sum, c) => sum + c, 0);
       });
   }
 
@@ -102,67 +235,17 @@ export class HomeComponent implements OnInit {
   }
 
   addComment(postId: number) {
-    const text = this.newComment[postId];
-    if (!text) return;
-    this.svc.addComment(postId, text)
+    const txt = this.newComment[postId];
+    if (!txt?.trim()) return;
+    this.svc.addComment(postId, txt)
       .subscribe(() => {
         this.newComment[postId] = '';
         this.loadComments(postId);
       });
   }
 }
+*/
 
 
 
 
-/*
-import { Component, OnInit } from '@angular/core';
-import { TweetService }      from '../services/tweet.service';
-import { Tweet }             from '../models/tweets/Tweet';
-
-@Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: [ './home.component.css' ]
-})
-export class HomeComponent implements OnInit {
-  tweets: Tweet[] = [];
-  newContent = '';
-  file?: File;
-
-  constructor(private tweetSvc: TweetService) {}
-
-  ngOnInit() {
-    this.load();
-  }
-
-  load() {
-    this.tweetSvc.page().subscribe(r => this.tweets = r.content);
-  }
-
-  onFile(evt: any) {
-    this.file = evt.target.files[0];
-  }
-
-  publish() {
-    this.tweetSvc.create(this.newContent, undefined, this.file)
-      .subscribe({
-        next: () => {
-          this.newContent = '';
-          this.file = undefined;
-          this.load();
-        },
-        error: err => {
-          console.error('Error publicando:', err);
-        }
-      });
-  }
-
-  react(id: number) {
-    this.tweetSvc.react(id, 1).subscribe(() => this.load());
-  }
-
-  repost(id: number) {
-    this.tweetSvc.repost(id).subscribe(() => this.load());
-  }
-}*/

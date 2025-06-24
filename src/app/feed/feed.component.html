@@ -1,21 +1,18 @@
+<!-- src/app/feed/feed.component.html -->
 <div *ngIf="!loading; else loadingTpl">
   <div *ngFor="let tw of tweets" class="post-card">
-    <!-- avatar y nombre igual que tenías -->
+    <!-- avatar siempre por defecto + username -->
     <img class="avatar"
-      [src]="
-        tw.postedBy.avatarUrl
-          ? tw.postedBy.avatarUrl
-          : 'assets/default-avatar.png'
-      "
-      alt="Avatar"
-    />
-    <strong>{{ tw.postedBy.username }}</strong>
+         src="assets/default-avatar.png"
+         alt="Avatar por defecto" />
+    <strong>{{ tw.postedBy }}</strong>
     <small>{{ tw.createdAt | date:'short' }}</small>
 
     <p>{{ tw.content }}</p>
     <img *ngIf="tw.imageUrl"
-         [src]="'https://red-social-spring-latest.onrender.com/' + tw.imageUrl"
-         class="post-img" />
+         [src]="'https://red-social-spring-latest.onrender.com' + tw.imageUrl"
+         class="post-img"
+         alt="Imagen adjunta" />
 
     <div class="actions">
       <span (click)="onReact(tw.id)">❤️ {{ tw.reactionCount }}</span>
@@ -23,6 +20,7 @@
     </div>
   </div>
 </div>
+
 <ng-template #loadingTpl>
   <p>Cargando feed…</p>
 </ng-template>

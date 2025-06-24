@@ -1,17 +1,29 @@
-<!-- File: src/app/post-detail/post-detail.component.html -->
+<!-- src/app/post-detail/post-detail.component.html -->
 <div *ngIf="tweet" class="post-card">
   <div class="header">
-    <img class="avatar" [src]="tweet.postedBy.avatarUrl||'assets/default-avatar.png'">
-    <strong>{{ tweet.postedBy.username }}</strong>
-    <small>{{ tweet.createdAt | date:'short' }}</small>
+    <img class="avatar"
+         src="assets/default-avatar.png"
+         alt="Avatar por defecto" />
+    <div class="user-info">
+      <strong>{{ tweet.postedBy }}</strong>
+      <small>{{ tweet.createdAt | date:'short' }}</small>
+    </div>
   </div>
+
   <p>{{ tweet.content }}</p>
-  <img *ngIf="tweet.imageUrl" [src]="tweet.imageUrl">
+  <img *ngIf="tweet.imageUrl"
+       [src]="'https://red-social-spring-latest.onrender.com' + tweet.imageUrl"
+       class="content-img"
+       alt="Imagen del post" />
+
   <hr>
   <h3>Comentarios</h3>
   <div *ngFor="let c of comments" class="comment">
     <strong>{{ c.username }}</strong>: {{ c.text }}
   </div>
-  <input [(ngModel)]="newComment" placeholder="Añadir comentario...">
+
+  <input [(ngModel)]="newComment"
+         placeholder="Añadir comentario..."
+         class="comment-input" />
   <button (click)="addComment()">Comentar</button>
 </div>

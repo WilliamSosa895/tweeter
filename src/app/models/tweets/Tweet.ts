@@ -2,11 +2,11 @@
 export interface Tweet {
   id: number;
   content: string;
-  imageUrl?: string;  // viene algo como "aab307fc6e7b18...preview.png"
+  imageUrl?: string;  
   commentCount: number;
   repostCount: number;
   reactionCount: number;
   createdAt: string;
-  postedBy: { username: string; avatarUrl?: string };
-  player?: { id: number; name: string };
+  // Ahora es sólo el username
+  postedBy: string;
 }

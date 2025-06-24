@@ -1,28 +1,22 @@
-# 1) Build de Angular
+# Etapa 1: Compilar la app
 FROM node:20 AS build
-
 WORKDIR /app
 
-# Copiamos sólo package.json y lock
+# Copia package.json y package-lock.json (si existe) e instala dependencias
 COPY package*.json ./
+RUN npm install
 
-# Instalamos dependencias
-RUN npm ci
-
-# Copiamos el resto del código y hacemos el build
+# Copia el resto del código y construye el bundle de Angular
 COPY . .
-# IMPORTANTE: el primer “--” le dice a npm que lo pase a ng CLI
-#           y el segundo “--output-path=dist” indica la carpeta destino.
 RUN npm run build -- --output-path=dist
 
-# 2) Servir con Nginx
+# Etapa 2: Servir con Nginx
 FROM nginx:alpine
+# Copia el contenido compilado al directorio que Nginx servirá
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copia TODO el contenido de /app/dist (tu build) a la carpeta estática de nginx
-COPY --from=build /app/dist/ /usr/share/nginx/html/
-
-# (Opcional) Elimina la página default de nginx para evitar confusiones
-RUN rm /usr/share/nginx/html/50x.html /usr/share/nginx/html/index.html || true
-
+# Exponer el puerto 80
 EXPOSE 80
+
+# Comando por defecto al arrancar el contenedor
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,6 +1,4 @@
-// Antes tenías:
-// import { TweetService, ReactionResponse } from '../services/tweet.service';
-
+// src/app/feed/feed.component.ts
 import { Component, OnInit } from '@angular/core';
 import { TweetService }       from '../services/tweet.service';
 import { Tweet }              from '../models/tweets/Tweet';
@@ -27,17 +25,16 @@ export class FeedComponent implements OnInit {
         this.tweets = res.content;
         this.loading = false;
       },
-      error: err => {
-        console.error(err);
-        this.loading = false;
-      }
+      error: () => this.loading = false
     });
   }
 
   onReact(tweetId: number) {
-    this.tweetService.addReaction(tweetId, 1).subscribe(() => this.load());
+    this.tweetService.addReaction(tweetId, 1)
+      .subscribe(() => this.load());
   }
 }
+
 
 
 /*import { Component, OnInit } from '@angular/core';

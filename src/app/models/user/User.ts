@@ -5,5 +5,5 @@ export class User {
   firstName: string = '';
   lastName: string = '';
   username: string = '';
-  avatarUrl: string = ''; // Aquí puedes usar una URL por defecto si lo deseas
+  avatarUrl: string = ''; 
 }

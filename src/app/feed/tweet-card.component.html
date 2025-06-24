@@ -1,12 +1,21 @@
-<!-- File: src/app/feed/tweet-card.component.html -->
+<!-- src/app/feed/tweet-card.component.html -->
 <div class="post-card">
   <div class="header">
-    <img class="avatar" [src]="tweet.postedBy.avatarUrl||'assets/default-avatar.png'">
-    <strong>{{ tweet.postedBy.username }}</strong>
-    <small>{{ tweet.createdAt | date:'short' }}</small>
+    <img class="avatar"
+         src="assets/default-avatar.png"
+         alt="Avatar por defecto" />
+    <div class="user-info">
+      <strong>{{ tweet.postedBy }}</strong>
+      <small>{{ tweet.createdAt | date:'short' }}</small>
+    </div>
   </div>
+
   <p>{{ tweet.content }}</p>
-  <img *ngIf="tweet.imageUrl" [src]="tweet.imageUrl">
+  <img *ngIf="tweet.imageUrl"
+       [src]="'https://red-social-spring-latest.onrender.com' + tweet.imageUrl"
+       class="post-image"
+       alt="Imagen del post" />
+
   <div class="actions">
     <button (click)="onLike()">👍 {{ tweet.reactionCount }}</button>
     <button (click)="onRepost()">🔄 {{ tweet.repostCount }}</button>
